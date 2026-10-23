@@ -1,26 +1,36 @@
-# RAG 知识库问答
+# RAG 知识库问答（升级版）
 
-一个基于 RAG（检索增强生成）的命令行问答程序：让 AI 基于你自己的文档回答问题。
+基于 RAG（检索增强生成）的命令行问答程序：多文件导入 + 向量持久化 + 语义检索。
 
-## 工作原理
+## 功能
 
-1. 读取文档并切块
-2. 用智谱 embedding-3 把每块变成向量
-3. 提问时，把问题也变成向量，用余弦相似度找出最相关的几块
-4. 把相关块 + 问题一起交给 DeepSeek 生成答案
+- 支持多文件导入（docs/ 目录下的 .txt / .md）
+- LangChain 文本切块（RecursiveCharacterTextSplitter）
+- 智谱 embedding-3 向量化
+- chromadb 持久化向量库（重启无需重新计算）
+- DeepSeek 生成答案，支持"资料里没有"拒答
 
 ## 运行方法
 
-1. 设置环境变量 `ZHIPU_KEY`（智谱 API Key）
-2. 设置环境变量 `DEEPSEEK_KEY`（DeepSeek API Key）
-3. 复制 `知识库示例.txt` 为 `知识库.txt`（或把自己的文档保存为 `知识库.txt`）
-4. 运行 `python main.py`
+1. 设置环境变量 `ZHIPU_KEY` 和 `DEEPSEEK_KEY`
+2. 把文档放进 `docs/` 目录（支持 .txt / .md）
+3. 运行 `python main.py`
+4. 首次运行会向量化并存入 `chroma_db/`，之后启动直接复用
 
-> `知识库.txt` 已在 `.gitignore` 中，不会上传到 GitHub。
+## 项目结构
+
+```
+rag-assistant/
+├── main.py              主程序
+├── docs/                知识库文档
+├── chroma_db/           向量库（自动生成，不入库）
+└── README.md
+```
 
 ## 技术栈
 
 - Python 3.12
-- 智谱 embedding-3（文本向量化）
+- chromadb（向量数据库，持久化）
+- 智谱 embedding-3（文本向量化，2048 维）
+- LangChain text splitters（文本切块）
 - DeepSeek API（答案生成）
-- urllib / json / math

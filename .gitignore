@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 .env
 知识库.txt
+chroma_db/
